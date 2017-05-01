@@ -1,0 +1,8 @@
+.vscode
+build
+tags
+.editorconfig
+pid/.vs
+pid/Debug
+pid/Release
+pid/x64
