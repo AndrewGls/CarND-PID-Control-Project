@@ -50,7 +50,6 @@ void PID::UpdateError(double cte)
 
 double PID::TotalError()
 {
-//	return -Kp_ * p_error_ - Ki_ * i_error_ - Kd_ * d_error_;
 	return -Kp_ * p_error_ - Ki_ * i_error_ - Kd_ * d_error_;
 }
 

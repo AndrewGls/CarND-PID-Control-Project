@@ -5,6 +5,8 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
+#define  use_ipv4
+
 // for convenience
 using json = nlohmann::json;
 
@@ -35,8 +37,9 @@ int main()
 
   PID pid;
   // TODO: Initialize the pid variable.
-//  pid.Init(0.1, 0, 5.);
-  pid.Init(0.1, 0, 10.);
+//  pid.Init(0.16, 0.0005, 15.);
+  pid.Init(0.2, 0.0005, 20.); // aggressive for throttle=50
+
 
   h.onMessage([&pid](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
@@ -61,13 +64,13 @@ int main()
           */
 		  pid.UpdateError(cte);
 		  const double steer_value = pid.TotalError();
-          
+
           // DEBUG
           std::cout << "CTE: " << cte << " Steering Value: " << steer_value << std::endl;
 
           json msgJson;
           msgJson["steering_angle"] = steer_value;
-          msgJson["throttle"] = 0.3;
+		  msgJson["throttle"] = 0.3;// 0.5;
           auto msg = "42[\"steer\"," + msgJson.dump() + "]";
           std::cout << msg << std::endl;
           ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
@@ -105,8 +108,11 @@ int main()
   });
 
   int port = 4567;
-  //if (h.listen(port))
+#ifdef use_ipv4
   if (h.listen("0.0.0.0", port))
+#else
+  if (h.listen(port))
+#endif
   {
     std::cout << "Listening to port " << port << std::endl;
   }
