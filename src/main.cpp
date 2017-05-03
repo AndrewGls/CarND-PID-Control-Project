@@ -5,6 +5,8 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
+// This define was added to fix the running of PID controller with simulator on Windows 10.
+// Uncomment it to run PID on Windows.
 //#define  use_ipv4
 
 // for convenience
