@@ -8,7 +8,7 @@
 
 // This define was added to fix the running of PID controller with simulator on Windows 10.
 // Uncomment it to run PID on Windows.
-#define  use_ipv4
+//#define  use_ipv4
 
 // Uncomment this define to start to train PID controller.
 //#define enable_tuning_mode
