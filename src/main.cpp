@@ -77,6 +77,17 @@ namespace
 		// P.I.D. {0.1, 0, 10.}
 		// P.I.D. {1.09, 0, 27.}
 
+		// throttle: 50
+		// P.I.D. {0.31, 0, 5.95}
+
+		// throttle: 60
+		// P.I.D. {0.092, 0, 2.95}
+
+		// throttle: 80
+		// P.I.D. {0.054, 0, 3.16}
+		// P.I.D. {0.114, 0, 2.82} // wiggly
+		// P.I.D. {0.114, 0, 3.12-3.24} // 
+
 		static constexpr double track_distance_ = 2900.;
 		static constexpr double err_thresh_ = 6.;
 		static constexpr double inc_step = 1.1;
@@ -145,7 +156,7 @@ namespace
 	PIDTuning::PIDTuning(PID& pid, double maxThrottle, Mode mode)
 		: total_time_(0)
 		, maxThrottle_(maxThrottle)
-		, curThrottle_(0.3)
+		, curThrottle_(0.8)
 		, mode_(mode)
 		, total_dist_(0)
 		, best_err_(0)
@@ -156,8 +167,8 @@ namespace
 		, tuned_param_ind_(0)
 		, state_(inc_param)
 		, params_{ 0., 0., 0. }
-//		, d_params_{ 1., 1., 1. } // is better to use if curThrottle_=0.2
-		, d_params_{ 0.5, 0.5, 0.5 }  // is better to use if curThrottle_=0.3
+		, d_params_{ 1., 1., 1. } // is better to use if curThrottle_=0.2
+//		, d_params_{ 0.5, 0.5, 0.5 }  // is better to use if curThrottle_=0.3
 		, best_params_{ 0., 0., 0. }
 	{
 		curThrottle_ = std::min(curThrottle_, maxThrottle_);
@@ -304,9 +315,9 @@ namespace
 	{
 		++tuned_param_ind_;
 
-//		if (tuned_param_ind_ == 1) {
-//			++tuned_param_ind_; // skip I-term;
-//		}
+		if (tuned_param_ind_ == 1) {
+			++tuned_param_ind_; // skip I-term;
+		}
 
 		if (tuned_param_ind_ >= 3) {
 			iters_++;
@@ -330,7 +341,7 @@ int main()
 	PID pid;
 	// TODO: Initialize the pid variable.
 	//pid.Init(0.3, 0.0005, 20.); // Manual selected params, throttle <= 0.5
-	pid.Init(1, 0, 27); // Automatically learned params, throttle <= 0.5
+	pid.Init(0.114, 0, 3.24); // Automatically learned params, throttle <= 0.5
 
 	// Automatically learned params.
 	// Twiddle: 0.2
@@ -339,11 +350,11 @@ int main()
 	// P.I.D. {0.1, 0, 7.8}
 
 	Mode mode = Mode::driving;
-	double maxThrottle = 0.5;
+	double maxThrottle = 0.75;// 0.5;
 
 #ifdef enable_tuning_mode
 	mode = Mode::tuning;
-	maxThrottle = 0.5;
+	maxThrottle = 0.8;
 #endif
 
 	Timer timer;
@@ -397,7 +408,7 @@ int main()
 		  double throttle = !tuning.isTuning() ? maxThrottle : tuning.getCurrThrottle();
 
 		  if (!tuning.isTuning()) {
-			  if (std::abs(cte) > 2) {
+			  if (std::abs(cte) > 1) {
 				  throttle = -0.001;
 			  }
 		  }
