@@ -214,6 +214,7 @@ namespace
 	double PIDTuning::calc_err() const
 	{
 		double err = err_ / err_ticks_;
+		err *= track_distance_ / total_dist_; // adds penalty if car cannot drive along the track
 		return err;
 	}
 
