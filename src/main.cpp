@@ -11,7 +11,7 @@
 //#define  use_ipv4
 
 // Uncomment this define to start to train PID controller.
-//#define enable_tuning_mode
+#define enable_tuning_mode
 
 
 // for convenience
@@ -145,7 +145,7 @@ namespace
 	PIDTuning::PIDTuning(PID& pid, double maxThrottle, Mode mode)
 		: total_time_(0)
 		, maxThrottle_(maxThrottle)
-		, curThrottle_(0.2)
+		, curThrottle_(0.3)
 		, mode_(mode)
 		, total_dist_(0)
 		, best_err_(0)
@@ -156,7 +156,8 @@ namespace
 		, tuned_param_ind_(0)
 		, state_(inc_param)
 		, params_{ 0., 0., 0. }
-		, d_params_{ 1., 1., 1. }
+//		, d_params_{ 1., 1., 1. } // is better to use if curThrottle_=0.2
+		, d_params_{ 0.5, 0.5, 0.5 }  // is better to use if curThrottle_=0.3
 		, best_params_{ 0., 0., 0. }
 	{
 		curThrottle_ = std::min(curThrottle_, maxThrottle_);
@@ -302,9 +303,9 @@ namespace
 	{
 		++tuned_param_ind_;
 
-		if (tuned_param_ind_ == 1) {
-			++tuned_param_ind_; // skip I-term;
-		}
+//		if (tuned_param_ind_ == 1) {
+//			++tuned_param_ind_; // skip I-term;
+//		}
 
 		if (tuned_param_ind_ >= 3) {
 			iters_++;
