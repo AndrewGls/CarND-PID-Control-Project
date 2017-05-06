@@ -11,7 +11,7 @@
 #define  use_ipv4
 
 // Uncomment this define to start to train PID controller.
-#define enable_tuning_mode
+//#define enable_tuning_mode
 
 
 // for convenience
@@ -145,7 +145,7 @@ namespace
 	PIDTuning::PIDTuning(PID& pid, double maxThrottle, Mode mode)
 		: total_time_(0)
 		, maxThrottle_(maxThrottle)
-		, curThrottle_(0.3)
+		, curThrottle_(0.2)
 		, mode_(mode)
 		, total_dist_(0)
 		, best_err_(0)
@@ -327,21 +327,21 @@ int main()
 
 	PID pid;
 	// TODO: Initialize the pid variable.
-	// Manual selected params, throttle <= 0.5
-	pid.Init(0.3, 0.0005, 20.); // aggressive for throttle=50
+	//pid.Init(0.3, 0.0005, 20.); // Manual selected params, throttle <= 0.5
+	pid.Init(1, 0, 27); // Automatically learned params, throttle <= 0.5
 
+	// Automatically learned params.
 	// Twiddle: 0.2
 	// P.I.D. {2.1, 0, 15.9}
-
 	// Twiddle: 0.3
 	// P.I.D. {0.1, 0, 7.8}
 
 	Mode mode = Mode::driving;
-	double maxThrottle = 0.4;
+	double maxThrottle = 0.5;
 
 #ifdef enable_tuning_mode
 	mode = Mode::tuning;
-	maxThrottle = 0.3;
+	maxThrottle = 0.5;
 #endif
 
 	Timer timer;
@@ -392,9 +392,17 @@ int main()
 
 		  tuning.printState();
 
+		  double throttle = !tuning.isTuning() ? maxThrottle : tuning.getCurrThrottle();
+
+		  if (!tuning.isTuning()) {
+			  if (std::abs(cte) > 2) {
+				  throttle = -0.001;
+			  }
+		  }
+
           json msgJson;
           msgJson["steering_angle"] = steer_value;
-		  msgJson["throttle"] = !tuning.isTuning() ? maxThrottle : tuning.getCurrThrottle();// 0.3;
+		  msgJson["throttle"] = throttle;// 0.3;
           auto msg = "42[\"steer\"," + msgJson.dump() + "]";
           std::cout << msg << std::endl;
           ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
