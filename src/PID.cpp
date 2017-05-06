@@ -29,6 +29,9 @@ void PID::Init(double Kp, double Ki, double Kd)
 	Ki_ = Ki;
 	Kd_ = Kd;
 
+	p_error_ = 0;
+	d_error_ = 0;
+
 	prev_cte_ = 0;
 	has_prev_cte_ = false;
 	i_error_ = 0;
