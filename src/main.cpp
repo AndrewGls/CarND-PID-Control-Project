@@ -11,7 +11,7 @@
 //#define  use_ipv4
 
 // Uncomment this define to start to train PID controller.
-#define enable_tuning_mode
+//#define enable_tuning_mode
 
 
 // for convenience
