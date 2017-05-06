@@ -21,4 +21,4 @@ At first, after implementing the PID controller equation, I started to experimen
 
 The final weights in my PID controller: Kp = 0.3, Ki = 0.0005, and Kd = 20.
 
-To learn PID controller hyperparameters, I implemented twiddle algorithm, which allows the model of car learns how to drive along the track from the scratch. It takes around 17 iterations to start todrive smoothly along the track with speed 35MPH. Below you can see the 20 mins video how model learns to drive.
+To learn PID controller hyperparameters (the I-term is zero, to be more correct it is PD controller), I implemented twiddle algorithm, which allows the model of car learns how to drive along the track from the scratch. It takes around 17 iterations to start todrive smoothly along the track with speed 35MPH. Below you can see the 20 mins video how model learns to drive. The hyperparameters learned by model is the following: Kp = 1.09, Ki = 0, and Kd = 27 to drive with speed <= 50.
